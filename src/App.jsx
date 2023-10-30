@@ -13,16 +13,17 @@ function App() {
   const [availablePlaces, setAvailablePlaces] = useState([]);
   const [pickedPlaces, setPickedPlaces] = useState([]);
 
-  // side effect because it is not directly related to the project
-  navigator.geolocation.getCurrentPosition((position) => {
-    const sortedPlaces = sortPlacesByDistance(
-      AVAILABLE_PLACES,
-      position.coords.latitude,
-      position.coords.longitude
-    );
-    // This will cause an infinite loop
-    setAvailablePlaces(sortedPlaces);
-  });
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const sortedPlaces = sortPlacesByDistance(
+        AVAILABLE_PLACES,
+        position.coords.latitude,
+        position.coords.longitude
+      );
+
+      setAvailablePlaces(sortedPlaces);
+    });
+  }, []);
 
   function handleStartRemovePlace(id) {
     modal.current.open();
@@ -77,6 +78,7 @@ function App() {
         <Places
           title="Available Places"
           places={availablePlaces}
+          fallbackText="Sorting places by distance..."
           onSelectPlace={handleSelectPlace}
         />
       </main>
